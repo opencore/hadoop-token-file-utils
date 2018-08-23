@@ -3,6 +3,7 @@ package com.opencore;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.token.Token;
 import org.apache.hadoop.security.token.TokenIdentifier;
@@ -25,6 +26,10 @@ public class DelegationTokenLister {
     Credentials cred = Credentials.readTokenStorageFile(source, null);
     for (Token<? extends TokenIdentifier> token : cred.getAllTokens()) {
       System.out.println(token.getKind() + "=" + token.encodeToUrlString());
+    }
+
+    for (Text key : cred.getAllSecretKeys()) {
+      System.out.println(key);
     }
   }
 

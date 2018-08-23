@@ -39,12 +39,19 @@ Hadoop 3 also introduced a tool `hadoop dtutil` that can be used to interact wit
 
 === Writable
 
+This is how a single Token is serialized:
+
 image::Token.png[Token]
+
+
+And this is how the structure looks for a Token File:
 
 image::HDTS.png[HDTS]
 
 
 === Protobuf
+
+Protobuf shares the first two fields with the Writable form (Magic Bytes and Serialization Format ("1" in this case) and then comes the Protocol Buffer serialized data which follows this schema:
 
 .A single Token
 [source,protobuf]
@@ -72,3 +79,9 @@ message CredentialsProto {
   repeated hadoop.common.CredentialsKVProto secrets = 2;
 }
 ----
+
+== This project
+
+This project contains two classes to list all Tokens in a file or to retrieve a Token by its kind.
+
+There is currently no API to get a Token by its alias. I have created https://issues.apache.org/jira/browse/HADOOP-15687[HADOOP-15687] to change this.
