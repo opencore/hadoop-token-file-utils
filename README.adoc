@@ -85,3 +85,34 @@ message CredentialsProto {
 This project contains two classes to list all Tokens in a file or to retrieve a Token by its kind.
 
 There is currently no API to get a Token by its alias. I have created https://issues.apache.org/jira/browse/HADOOP-15687[HADOOP-15687] to change this.
+
+
+=== How to use
+
+You build this class and then you can use these commands:
+
+[source,bash]
+----
+hadoop jar hadoop-token-file-utils-1.0-SNAPSHOT.jar com.opencore.DelegationTokenLister token_test
+hadoop jar hadoop-token-file-utils-1.0-SNAPSHOT.jar com.opencore.DelegationTokenReader token_test HDFS_DELEGATION_TOKEN
+----
+
+== PySpark
+
+If you need to read a Token File from within PySpark you can use a code snippet like this:
+
+[source,python]
+----
+def _read_delegation_token_file(tokenfile, kind):
+    from pyspark import SparkContext
+
+    sc : SparkContext = SparkContext.getOrCreate()
+
+    file = sc._gateway.jvm.java.io.File(tokenfile)
+    Credentials = sc._gateway.jvm.org.apache.hadoop.security.Credentials()
+
+    credentials = Credentials.readTokenStorageFile(file, None)
+    for token in credentials.getAllTokens().iterator():
+        if str(token.getKind()) == kind:
+            return token.encodeToUrlString()
+----
